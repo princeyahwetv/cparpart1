@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contemporary Arts in Philippine Region part 1</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .question-card {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .option-button {
+            transition: all 0.2s ease;
+        }
+        .option-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        .correct { background-color: #10b981 !important; color: white; }
+        .incorrect { background-color: #ef4444 !important; color: white; }
+        .progress-bar {
+            transition: width 0.3s ease;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-purple-50 to-blue-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        
+        <!-- Intro Page -->
+        <div id="intro-page" class="fade-in">
+            <div class="text-center mb-8">
+                <h1 class="text-5xl font-bold text-gray-800 mb-4">🎨 Contemporary Arts in Philippine Region part 1</h1>
+                <p class="text-gray-600 text-xl mb-2">Test your knowledge of Philippine arts, culture, and traditions</p>
+                <p class="text-gray-500 text-lg">⏰ You have 40 seconds to complete all questions!</p>
+            </div>
+            
+            <div class="bg-white rounded-2xl p-8 shadow-lg max-w-md mx-auto">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Student Information</h2>
+                <form id="student-form" class="space-y-6">
+                    <div>
+                        <label for="student-name" class="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
+                        <input type="text" id="student-name" name="name" required 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                               placeholder="Enter your full name">
+                    </div>
+                    
+                    <div>
+                        <label for="student-grade" class="block text-sm font-medium text-gray-700 mb-2">Grade Level *</label>
+                        <select id="student-grade" name="grade" required 
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200">
+                            <option value="">Select your grade</option>
+                            <option value="Grade 7">Grade 7</option>
+                            <option value="Grade 8">Grade 8</option>
+                            <option value="Grade 9">Grade 9</option>
+                            <option value="Grade 10">Grade 10</option>
+                            <option value="Grade 11">Grade 11</option>
+                            <option value="Grade 12">Grade 12</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="student-section" class="block text-sm font-medium text-gray-700 mb-2">Section *</label>
+                        <input type="text" id="student-section" name="section" required 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                               placeholder="Enter your section (e.g., A, B, Einstein, etc.)">
+                    </div>
+                    
+                    <button type="submit" 
+                            class="w-full bg-gradient-to-r from-purple-500 to-blue-500 text-white py-3 px-6 rounded-lg font-semibold hover:from-purple-600 hover:to-blue-600 transition-all duration-200 transform hover:scale-105">
+                        Start Quiz 🚀
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Quiz Page -->
+        <div id="quiz-page" class="hidden">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h1 class="text-4xl font-bold text-gray-800 mb-2">🎨 Contemporary Arts in Philippine Region part 1</h1>
+                <div class="bg-white rounded-lg p-3 inline-block shadow-md">
+                    <p class="text-gray-600 text-sm">Student: <span id="display-name" class="font-semibold"></span> | 
+                    Grade: <span id="display-grade" class="font-semibold"></span> | 
+                    Section: <span id="display-section" class="font-semibold"></span></p>
+                </div>
+            </div>
+
+            <!-- Timer and Progress Bar -->
+            <div class="mb-8">
+                <div class="flex justify-between items-center mb-4">
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm font-medium text-gray-700">Progress</span>
+                        <span class="text-sm font-medium text-gray-700" id="progress-text">0 / 21</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-lg font-medium text-gray-700">⏰ Time Remaining:</span>
+                        <span class="bg-red-100 text-red-600 px-4 py-2 rounded-lg text-xl font-bold" id="overall-timer">40</span>
+                    </div>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-3">
+                    <div class="progress-bar bg-gradient-to-r from-purple-500 to-blue-500 h-3 rounded-full" id="progress-bar" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Quiz Container -->
+            <div id="quiz-container" class="space-y-6">
+                <!-- Questions will be generated here -->
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="results-section" class="hidden text-center mt-8">
+            <div class="bg-white rounded-2xl p-8 shadow-lg">
+                <div class="text-6xl mb-4" id="results-emoji">🎉</div>
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Quiz Complete!</h2>
+                <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                    <p class="text-gray-600 mb-2">Student: <span id="final-name" class="font-semibold"></span></p>
+                    <p class="text-gray-600 mb-2">Grade: <span id="final-grade" class="font-semibold"></span> | Section: <span id="final-section" class="font-semibold"></span></p>
+                </div>
+                <div class="text-2xl font-semibold mb-4" id="final-score"></div>
+                <div class="text-gray-600 mb-6" id="score-message"></div>
+                
+                <div class="space-y-4">
+                    <button onclick="submitToTeacher()" id="submit-btn"
+                            class="w-full bg-green-500 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-600 transition-all duration-200">
+                        📧 Send Results to Teacher
+                    </button>
+                    <button onclick="viewDatabase()" 
+                            class="w-full bg-blue-500 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-600 transition-all duration-200">
+                        📊 View All Student Scores
+                    </button>
+                    <button onclick="restartQuiz()" 
+                            class="w-full bg-gradient-to-r from-purple-500 to-blue-500 text-white px-8 py-3 rounded-lg font-semibold hover:from-purple-600 hover:to-blue-600 transition-all duration-200">
+                        Take Quiz Again
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Database Section -->
+        <div id="database-section" class="hidden mt-8">
+            <div class="bg-white rounded-2xl p-8 shadow-lg">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-3xl font-bold text-gray-800">📊 Student Scores Database</h2>
+                    <button onclick="closeDatabase()" 
+                            class="bg-gray-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-gray-600 transition-all duration-200">
+                        ✕ Close
+                    </button>
+                </div>
+                
+                <div class="mb-6 flex flex-wrap gap-4">
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <p class="text-sm text-gray-600">Total Students</p>
+                        <p class="text-2xl font-bold text-blue-600" id="total-students">0</p>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <p class="text-sm text-gray-600">Average Score</p>
+                        <p class="text-2xl font-bold text-green-600" id="average-score">0%</p>
+                    </div>
+                    <div class="bg-yellow-50 p-4 rounded-lg">
+                        <p class="text-sm text-gray-600">Highest Score</p>
+                        <p class="text-2xl font-bold text-yellow-600" id="highest-score">0%</p>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded-lg">
+                        <p class="text-sm text-gray-600">Lowest Score</p>
+                        <p class="text-2xl font-bold text-red-600" id="lowest-score">0%</p>
+                    </div>
+                </div>
+
+                <div class="mb-4 flex flex-wrap gap-2">
+                    <button onclick="filterByGrade('all')" id="filter-all" 
+                            class="px-4 py-2 bg-purple-500 text-white rounded-lg font-semibold hover:bg-purple-600 transition-all duration-200">
+                        All Grades
+                    </button>
+                    <button onclick="filterByGrade('Grade 7')" id="filter-grade-7" 
+                            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-all duration-200">
+                        Grade 7
+                    </button>
+                    <button onclick="filterByGrade('Grade 8')" id="filter-grade-8" 
+                            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-all duration-200">
+                        Grade 8
+                    </button>
+                    <button onclick="filterByGrade('Grade 9')" id="filter-grade-9" 
+                            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-all duration-200">
+                        Grade 9
+                    </button>
+                    <button onclick="filterByGrade('Grade 10')" id="filter-grade-10" 
+                            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-all duration-200">
+                        Grade 10
+                    </button>
+                    <button onclick="filterByGrade('Grade 11')" id="filter-grade-11" 
+                            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-all duration-200">
+                        Grade 11
+                    </button>
+                    <button onclick="filterByGrade('Grade 12')" id="filter-grade-12" 
+                            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-all duration-200">
+                        Grade 12
+                    </button>
+                </div>
+
+                <div class="mb-4 flex gap-2">
+                    <button onclick="exportToCSV()" 
+                            class="px-4 py-2 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600 transition-all duration-200">
+                        📥 Export CSV
+                    </button>
+                    <button onclick="clearDatabase()" 
+                            class="px-4 py-2 bg-red-500 text-white rounded-lg font-semibold hover:bg-red-600 transition-all duration-200">
+                        🗑️ Clear All Data
+                    </button>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse border border-gray-300">
+                        <thead>
+                            <tr class="bg-gray-50">
+                                <th class="border border-gray-300 px-4 py-2 text-left font-semibold">#</th>
+                                <th class="border border-gray-300 px-4 py-2 text-left font-semibold">Student Name</th>
+                                <th class="border border-gray-300 px-4 py-2 text-left font-semibold">Grade</th>
+                                <th class="border border-gray-300 px-4 py-2 text-left font-semibold">Section</th>
+                                <th class="border border-gray-300 px-4 py-2 text-left font-semibold">Score</th>
+                                <th class="border border-gray-300 px-4 py-2 text-left font-semibold">Percentage</th>
+                                <th class="border border-gray-300 px-4 py-2 text-left font-semibold">Performance</th>
+                                <th class="border border-gray-300 px-4 py-2 text-left font-semibold">Date & Time</th>
+                            </tr>
+                        </thead>
+                        <tbody id="database-table-body">
+                            <!-- Student records will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "A traditional folk dance from Leyte where dancers step between moving bamboo poles, mimicking the movements of a bird.",
+                options: ["Cariñosa", "Banga", "Sinulog", "Tinikling"],
+                correct: 3
+            },
+            {
+                question: "A renowned Filipino artist known for his iconic and surreal painting style, including works like *Skulls & Butterflies*.",
+                options: ["Andres Barrioquinto", "Dex Fernandez", "Ernest Concepcion", "Ronald Ventura"],
+                correct: 3
+            },
+            {
+                question: "The art form that combines acting, dialogue, and stagecraft to present a story live.",
+                options: ["Theater", "Film", "Music", "Dance"],
+                correct: 0
+            },
+            {
+                question: "A festival in Daanbantayan, Cebu, honoring Datu Daya, featuring street dancing that blends traditional and contemporary choreography.",
+                options: ["Dinagyang Festival", "Ati-Atihan", "Sinulog Festival", "Haladaya Festival"],
+                correct: 3
+            },
+            {
+                question: "A conceptual Filipino artist who uses everyday objects, folded photographs, and personal items like his own shirt to create poetic installations.",
+                options: ["Ernest Concepcion", "Gary-Ross Pastrana", "Jose Joya", "Leeroy New"],
+                correct: 0
+            },
+            {
+                question: "The art form that deals with the design and construction of buildings and spaces.",
+                options: ["Media Arts", "Architecture and Allied Arts", "Theater", "Literature"],
+                correct: 1
+            },
+            {
+                question: "A 2015 enamel-on-canvas work by Ernest Concepcion juxtaposing religious imagery and pop culture.",
+                options: ["Garapata", "OMG Christ", "Super than Superman", "Bayanihan"],
+                correct: 1
+            },
+            {
+                question: "A 20-meter statue in Mactan, Cebu, commemorating the bravery of the first Filipino hero who resisted Spanish colonization.",
+                options: ["Rizal Monument", "Lapu-Lapu Shrine", "Burnham Park", "Nine Muses"],
+                correct: 1
+            },
+            {
+                question: "A burial jar found in Lipuun Point, Palawan, symbolizing early Filipinos' belief in life after death.",
+                options: ["Angono Petroglyphs", "Banga Dance", "Manunggul Jar", "Maitum Jars"],
+                correct: 2
+            },
+            {
+                question: "The art form that uses moving images to tell stories, inform, or entertain.",
+                options: ["Film", "Media Arts", "Theater", "Dance"],
+                correct: 0
+            },
+            {
+                question: "The art form that includes digital design, animation, and other technology-based creative outputs.",
+                options: ["Music", "Dance", "Literature", "Media Arts"],
+                correct: 3
+            },
+            {
+                question: "Ancient rock engravings discovered in Binangonan, Rizal by Carlos 'Botong' Francisco in 1965, dating back to the late Neolithic period.",
+                options: ["Nine Muses", "Maitum Jars", "Angono Petroglyphs", "Manunggul Jar"],
+                correct: 2
+            },
+            {
+                question: "A Baroque-style cathedral in Vigan, Ilocos Sur, originally built in 1574 and reconstructed in 1641.",
+                options: ["Manila Cathedral", "Cebu Cathedral", "San Agustin Church", "St. Paul Metropolitan Cathedral"],
+                correct: 3
+            },
+            {
+                question: "A grand cultural festival held every January in Cebu City to honor the Santo Niño, with dance movements imitating water currents.",
+                options: ["Ati-Atihan", "Sinulog Festival", "Pahiyas Festival", "Haladaya Festival"],
+                correct: 1
+            },
+            {
+                question: "A courtship dance from Panay Island where dancers use fans or handkerchiefs to show flirtation and affection.",
+                options: ["Haladaya Festival", "Tinikling", "Sinulog", "Cariñosa"],
+                correct: 3
+            },
+            {
+                question: "A contemporary Filipino artist known for his large-scale art installations, including one in the Paoay Sand Dunes.",
+                options: ["Leeroy New", "Fidel Malig Sarmiento", "Ronald Ventura", "Ernest Concepcion"],
+                correct: 0
+            },
+            {
+                question: "A Cebuano artist who creates mixed-media works using found metal scraps, including *A Brighter Sun* and *A Quiet Place*.",
+                options: ["Dennis 'Sio' Montera", "Fidel Malig Sarmiento", "Khriss Bajade", "Andres Barrioquinto"],
+                correct: 1
+            },
+            {
+                question: "The art form that involves arranging sounds to create melody, harmony, rhythm, and expression.",
+                options: ["Dance", "Literature", "Media Arts", "Music"],
+                correct: 3
+            },
+            {
+                question: "A wall painting by Josef Luciano Dans in Paete, Laguna depicting heaven, earth, and hell.",
+                options: ["Spoliarium", "Bayanihan", "The Making of the Philippine Flag", "Langit, Lupa, at Impyerno"],
+                correct: 3
+            },
+            {
+                question: "A contemporary artwork by Ronald Ventura that presents a surreal fantasy with comic elements.",
+                options: ["Super than Superman", "OMG Christ", "Garapata", "Bayanihan"],
+                correct: 0
+            },
+            {
+                question: "A sculpture by Napoleon Abueva at the UP Diliman Faculty Center, representing various disciplines in the arts.",
+                options: ["Nine Muses", "Spoliarium", "Oblation", "Bayanihan"],
+                correct: 0
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = false;
+        let overallTimeLeft = 40;
+        let timer = null;
+        let quizStarted = false;
+        let studentInfo = {};
+        let shuffledQuestions = [];
+        let currentFilter = 'all';
+
+        // Database functions
+        function getStudentDatabase() {
+            const stored = localStorage.getItem('studentScores');
+            return stored ? JSON.parse(stored) : [];
+        }
+
+        function saveToDatabase(studentData) {
+            const database = getStudentDatabase();
+            database.push(studentData);
+            localStorage.setItem('studentScores', JSON.stringify(database));
+        }
+
+        function clearDatabase() {
+            if (confirm('Are you sure you want to clear all student data? This cannot be undone.')) {
+                localStorage.removeItem('studentScores');
+                updateDatabaseDisplay();
+                alert('Database cleared successfully!');
+            }
+        }
+
+        function exportToCSV() {
+            const database = getStudentDatabase();
+            if (database.length === 0) {
+                alert('No data to export!');
+                return;
+            }
+
+            const headers = ['Student Name', 'Grade', 'Section', 'Score', 'Total Questions', 'Percentage', 'Performance Level', 'Date & Time'];
+            const csvContent = [
+                headers.join(','),
+                ...database.map(record => [
+                    `"${record.name}"`,
+                    `"${record.grade}"`,
+                    `"${record.section}"`,
+                    record.score,
+                    record.totalQuestions,
+                    `${record.percentage}%`,
+                    `"${record.performanceLevel}"`,
+                    `"${record.completedAt}"`
+                ].join(','))
+            ].join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `student_scores_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        function filterByGrade(grade) {
+            currentFilter = grade;
+            
+            // Update button styles
+            document.querySelectorAll('[id^="filter-"]').forEach(btn => {
+                btn.className = 'px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-all duration-200';
+            });
+            
+            const activeBtn = grade === 'all' ? 'filter-all' : `filter-${grade.toLowerCase().replace(' ', '-')}`;
+            document.getElementById(activeBtn).className = 'px-4 py-2 bg-purple-500 text-white rounded-lg font-semibold hover:bg-purple-600 transition-all duration-200';
+            
+            updateDatabaseDisplay();
+        }
+
+        function updateDatabaseDisplay() {
+            const database = getStudentDatabase();
+            const filteredData = currentFilter === 'all' ? database : database.filter(record => record.grade === currentFilter);
+            
+            // Update statistics
+            document.getElementById('total-students').textContent = filteredData.length;
+            
+            if (filteredData.length > 0) {
+                const percentages = filteredData.map(record => record.percentage);
+                const avgScore = Math.round(percentages.reduce((a, b) => a + b, 0) / percentages.length);
+                const highScore = Math.max(...percentages);
+                const lowScore = Math.min(...percentages);
+                
+                document.getElementById('average-score').textContent = `${avgScore}%`;
+                document.getElementById('highest-score').textContent = `${highScore}%`;
+                document.getElementById('lowest-score').textContent = `${lowScore}%`;
+            } else {
+                document.getElementById('average-score').textContent = '0%';
+                document.getElementById('highest-score').textContent = '0%';
+                document.getElementById('lowest-score').textContent = '0%';
+            }
+            
+            // Update table
+            const tableBody = document.getElementById('database-table-body');
+            tableBody.innerHTML = '';
+            
+            if (filteredData.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="8" class="border border-gray-300 px-4 py-8 text-center text-gray-500">No student records found</td></tr>';
+                return;
+            }
+            
+            filteredData.forEach((record, index) => {
+                const row = document.createElement('tr');
+                row.className = index % 2 === 0 ? 'bg-white' : 'bg-gray-50';
+                
+                const performanceColor = record.percentage >= 90 ? 'text-green-600' : 
+                                       record.percentage >= 80 ? 'text-blue-600' : 
+                                       record.percentage >= 70 ? 'text-yellow-600' : 'text-red-600';
+                
+                row.innerHTML = `
+                    <td class="border border-gray-300 px-4 py-2">${index + 1}</td>
+                    <td class="border border-gray-300 px-4 py-2 font-semibold">${record.name}</td>
+                    <td class="border border-gray-300 px-4 py-2">${record.grade}</td>
+                    <td class="border border-gray-300 px-4 py-2">${record.section}</td>
+                    <td class="border border-gray-300 px-4 py-2">${record.score}/${record.totalQuestions}</td>
+                    <td class="border border-gray-300 px-4 py-2 font-semibold">${record.percentage}%</td>
+                    <td class="border border-gray-300 px-4 py-2 ${performanceColor} font-semibold">${record.performanceLevel}</td>
+                    <td class="border border-gray-300 px-4 py-2 text-sm">${record.completedAt}</td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+
+        function viewDatabase() {
+            document.getElementById('results-section').classList.add('hidden');
+            document.getElementById('database-section').classList.remove('hidden');
+            updateDatabaseDisplay();
+        }
+
+        function closeDatabase() {
+            document.getElementById('database-section').classList.add('hidden');
+            document.getElementById('results-section').classList.remove('hidden');
+        }
+
+        // Function to shuffle array
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // Handle student form submission
+        document.getElementById('student-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            studentInfo = {
+                name: document.getElementById('student-name').value,
+                grade: document.getElementById('student-grade').value,
+                section: document.getElementById('student-section').value,
+                timestamp: new Date().toLocaleString()
+            };
+            
+            // Display student info in quiz
+            document.getElementById('display-name').textContent = studentInfo.name;
+            document.getElementById('display-grade').textContent = studentInfo.grade;
+            document.getElementById('display-section').textContent = studentInfo.section;
+            
+            // Shuffle questions for this quiz session
+            shuffledQuestions = shuffleArray(questions);
+            
+            // Hide intro and show quiz
+            document.getElementById('intro-page').classList.add('hidden');
+            document.getElementById('quiz-page').classList.remove('hidden');
+            document.getElementById('quiz-page').classList.add('fade-in');
+            
+            initializeQuiz();
+            updateProgress();
+        });
+
+        function initializeQuiz() {
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '';
+            
+            shuffledQuestions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question-card bg-white rounded-2xl p-6 shadow-lg';
+                questionDiv.id = `question-${index}`;
+                questionDiv.style.display = index === 0 ? 'block' : 'none';
+                
+                questionDiv.innerHTML = `
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="bg-gradient-to-r from-purple-500 to-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                                Question ${index + 1}
+                            </span>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800 leading-relaxed">${q.question}</h3>
+                    </div>
+                    <div class="space-y-3">
+                        ${q.options.map((option, optIndex) => `
+                            <button onclick="selectAnswer(${index}, ${optIndex})" 
+                                    class="option-button w-full text-left p-4 rounded-lg border-2 border-gray-200 hover:border-purple-300 hover:bg-purple-50 transition-all duration-200 font-medium text-gray-700"
+                                    id="option-${index}-${optIndex}">
+                                <span class="font-semibold text-purple-600 mr-3">${String.fromCharCode(65 + optIndex)}.</span>
+                                ${option}
+                            </button>
+                        `).join('')}
+                    </div>
+                    <div class="mt-6 flex justify-between">
+                        <button onclick="previousQuestion()" 
+                                class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-colors duration-200 ${index === 0 ? 'invisible' : ''}"
+                                ${index === 0 ? 'disabled' : ''}>
+                            ← Previous
+                        </button>
+                        <button onclick="nextQuestion()" 
+                                class="px-6 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-lg font-semibold hover:from-purple-600 hover:to-blue-600 transition-all duration-200"
+                                id="next-btn-${index}" disabled style="opacity: 0.5;">
+                            ${index === shuffledQuestions.length - 1 ? 'Finish Quiz' : 'Next →'}
+                        </button>
+                    </div>
+                `;
+                
+                container.appendChild(questionDiv);
+            });
+        }
+
+        function startOverallTimer() {
+            if (quizStarted) return;
+            quizStarted = true;
+            overallTimeLeft = 40;
+            updateOverallTimerDisplay();
+            
+            timer = setInterval(() => {
+                overallTimeLeft--;
+                updateOverallTimerDisplay();
+                
+                if (overallTimeLeft <= 0) {
+                    clearInterval(timer);
+                    timeUpForEntireQuiz();
+                }
+            }, 1000);
+        }
+
+        function updateOverallTimerDisplay() {
+            const timerElement = document.getElementById('overall-timer');
+            if (timerElement) {
+                timerElement.textContent = overallTimeLeft;
+                
+                if (overallTimeLeft <= 5) {
+                    timerElement.className = 'bg-red-500 text-white px-4 py-2 rounded-lg text-xl font-bold animate-pulse';
+                } else if (overallTimeLeft <= 10) {
+                    timerElement.className = 'bg-yellow-100 text-yellow-600 px-4 py-2 rounded-lg text-xl font-bold';
+                } else {
+                    timerElement.className = 'bg-red-100 text-red-600 px-4 py-2 rounded-lg text-xl font-bold';
+                }
+            }
+        }
+
+        function timeUpForEntireQuiz() {
+            for (let i = currentQuestion; i < questions.length; i++) {
+                const question = questions[i];
+                question.options.forEach((_, index) => {
+                    const button = document.getElementById(`option-${i}-${index}`);
+                    if (button) {
+                        button.disabled = true;
+                    }
+                });
+            }
+            
+            const timerElement = document.getElementById('overall-timer');
+            timerElement.textContent = 'Time Up!';
+            timerElement.className = 'bg-red-500 text-white px-4 py-2 rounded-lg text-xl font-bold';
+            
+            setTimeout(() => {
+                showResults();
+            }, 1000);
+        }
+
+        function selectAnswer(questionIndex, optionIndex) {
+            if (answered || overallTimeLeft <= 0) return;
+            
+            if (!quizStarted) {
+                startOverallTimer();
+            }
+            
+            answered = true;
+            const question = shuffledQuestions[questionIndex];
+            const isCorrect = optionIndex === question.correct;
+            
+            if (isCorrect) {
+                score++;
+            }
+            
+            question.options.forEach((_, index) => {
+                const button = document.getElementById(`option-${questionIndex}-${index}`);
+                if (index === question.correct) {
+                    button.classList.add('correct');
+                } else if (index === optionIndex && !isCorrect) {
+                    button.classList.add('incorrect');
+                }
+                button.disabled = true;
+            });
+            
+            const nextBtn = document.getElementById(`next-btn-${questionIndex}`);
+            nextBtn.disabled = false;
+            nextBtn.style.opacity = '1';
+            
+            updateProgress();
+        }
+
+        function nextQuestion() {
+            if (overallTimeLeft <= 0) return;
+            
+            if (currentQuestion < shuffledQuestions.length - 1) {
+                document.getElementById(`question-${currentQuestion}`).style.display = 'none';
+                currentQuestion++;
+                document.getElementById(`question-${currentQuestion}`).style.display = 'block';
+                answered = false;
+            } else {
+                clearInterval(timer);
+                showResults();
+            }
+        }
+
+        function previousQuestion() {
+            if (overallTimeLeft <= 0) return;
+            
+            if (currentQuestion > 0) {
+                document.getElementById(`question-${currentQuestion}`).style.display = 'none';
+                currentQuestion--;
+                document.getElementById(`question-${currentQuestion}`).style.display = 'block';
+            }
+        }
+
+        function updateProgress() {
+            const answeredQuestions = currentQuestion + (answered ? 1 : 0);
+            const progressPercent = (answeredQuestions / shuffledQuestions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progressPercent}%`;
+            document.getElementById('progress-text').textContent = `${answeredQuestions} / ${shuffledQuestions.length}`;
+        }
+
+        function showResults() {
+            document.getElementById('quiz-page').style.display = 'none';
+            document.getElementById('results-section').classList.remove('hidden');
+            
+            // Display student info in results
+            document.getElementById('final-name').textContent = studentInfo.name;
+            document.getElementById('final-grade').textContent = studentInfo.grade;
+            document.getElementById('final-section').textContent = studentInfo.section;
+            
+            const percentage = Math.round((score / shuffledQuestions.length) * 100);
+            document.getElementById('final-score').textContent = `${score} / ${shuffledQuestions.length} (${percentage}%)`;
+            
+            let emoji, message, performanceLevel;
+            if (percentage >= 90) {
+                emoji = '🏆';
+                message = 'Outstanding! You\'re a Filipino arts and culture expert!';
+                performanceLevel = 'Outstanding';
+            } else if (percentage >= 80) {
+                emoji = '🎉';
+                message = 'Excellent work! You have great knowledge of Filipino culture!';
+                performanceLevel = 'Excellent';
+            } else if (percentage >= 70) {
+                emoji = '👏';
+                message = 'Good job! You know quite a bit about Filipino arts!';
+                performanceLevel = 'Good';
+            } else if (percentage >= 60) {
+                emoji = '👍';
+                message = 'Not bad! Keep learning about Filipino culture!';
+                performanceLevel = 'Satisfactory';
+            } else {
+                emoji = '📚';
+                message = 'Keep studying! There\'s so much to discover about Filipino arts!';
+                performanceLevel = 'Needs Improvement';
+            }
+            
+            document.getElementById('results-emoji').textContent = emoji;
+            document.getElementById('score-message').textContent = message;
+            
+            // Save to database
+            const studentRecord = {
+                name: studentInfo.name,
+                grade: studentInfo.grade,
+                section: studentInfo.section,
+                score: score,
+                totalQuestions: shuffledQuestions.length,
+                percentage: percentage,
+                performanceLevel: performanceLevel,
+                startedAt: studentInfo.timestamp,
+                completedAt: new Date().toLocaleString()
+            };
+            
+            saveToDatabase(studentRecord);
+            
+            // Automatically send results to teacher
+            setTimeout(() => {
+                submitToTeacher();
+            }, 2000);
+        }
+
+        function submitToTeacher() {
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.innerHTML = '📤 Sending Email...';
+            submitBtn.disabled = true;
+            
+            // Prepare email content
+            const percentage = Math.round((score / shuffledQuestions.length) * 100);
+            const subject = `Quiz Results - ${studentInfo.name} - Contemporary Arts in Philippine Region part 1`;
+            const body = `Dear Teacher,
+
+Here are the quiz results for:
+
+Student Name: ${studentInfo.name}
+Grade: ${studentInfo.grade}
+Section: ${studentInfo.section}
+Quiz: Contemporary Arts in Philippine Region part 1
+
+RESULTS:
+Score: ${score} out of ${shuffledQuestions.length} questions
+Percentage: ${percentage}%
+Quiz Started: ${studentInfo.timestamp}
+Quiz Completed: ${new Date().toLocaleString()}
+
+Performance Level: ${percentage >= 90 ? 'Outstanding' : percentage >= 80 ? 'Excellent' : percentage >= 70 ? 'Good' : percentage >= 60 ? 'Satisfactory' : 'Needs Improvement'}
+
+Best regards,
+Quiz System`;
+
+            // Create mailto link
+            const teacherEmail = 'joel.rodriguez@deped.gov.ph';
+            const mailtoLink = `mailto:${teacherEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            
+            // Open email client
+            window.location.href = mailtoLink;
+            
+            // Update button status
+            setTimeout(() => {
+                submitBtn.innerHTML = '✅ Email Opened Successfully!';
+                submitBtn.className = 'w-full bg-green-600 text-white px-8 py-3 rounded-lg font-semibold cursor-not-allowed';
+                
+                // Show success message
+                alert('Your email client has been opened with the quiz results. Please send the email to complete the submission.');
+            }, 1000);
+        }
+
+        function restartQuiz() {
+            clearInterval(timer);
+            currentQuestion = 0;
+            score = 0;
+            answered = false;
+            overallTimeLeft = 40;
+            quizStarted = false;
+            studentInfo = {};
+            shuffledQuestions = [];
+            
+            // Reset all displays
+            document.getElementById('results-section').classList.add('hidden');
+            document.getElementById('quiz-page').style.display = 'none';
+            document.getElementById('intro-page').classList.remove('hidden');
+            
+            // Reset form
+            document.getElementById('student-form').reset();
+            
+            // Reset submit button
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.innerHTML = '📧 Send Results to Teacher';
+            submitBtn.className = 'w-full bg-green-500 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-600 transition-all duration-200';
+            submitBtn.disabled = false;
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97052b0c03430a8c',t:'MTc1NTM5MTczMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
